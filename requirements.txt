@@ -1,0 +1,12 @@
+Flask
+Flask-SQLAlchemy
+psycopg2-binary
+sympy
+pandas
+openpyxl
+python-dotenv
+asteval
+flask-migrate
+flask-login
+
+# pip install -r requirements.txt

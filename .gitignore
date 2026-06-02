@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+venv/
+.env
+
+# Flask
+instance/
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite3
+
+# Excel Files
+*.xlsx
+*.xlsm
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# postman
+.postman/
+postman/
+
+# flask migrations
+migrations/

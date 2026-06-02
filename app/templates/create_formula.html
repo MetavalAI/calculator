@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% block title %}Create Formula{% endblock %}
+
+{% block content %}
+
+<div class="mv-page-header">
+    <h2>Create Formula</h2>
+    <p>Define a new engineering formula with custom variables and unit support.</p>
+</div>
+
+<div style="max-width:860px;">
+
+<form method="POST">
+
+    <!-- BASIC INFO -->
+    <div class="mv-card mv-mb-3">
+
+        <div class="mv-section-label" style="margin-bottom:1rem;">Formula Info</div>
+
+        <div class="mv-form-group">
+            <label class="mv-label">Formula Name</label>
+            <input type="text" name="name" placeholder="e.g. Distance Calculator" required>
+        </div>
+
+        <div class="mv-form-group">
+            <label class="mv-label">Description</label>
+            <textarea name="description" rows="2" placeholder="Describe what this formula calculates" required></textarea>
+        </div>
+
+        <div class="mv-form-group" style="margin-bottom:0;">
+            <label class="mv-label">Expression</label>
+            <textarea name="expression" rows="2" placeholder="e.g. speed * time  or  Q * sqrt(SG) / sqrt(DP)" required></textarea>
+            <div class="mv-form-hint">Operators: <code style="color:var(--accent);font-size:0.82em;">+  -  *  /  sqrt()  pow()</code></div>
+        </div>
+
+    </div>
+
+    <!-- VARIABLES -->
+    <div class="mv-card">
+
+        <div class="mv-section-label" style="margin-bottom:0.5rem;">Variables</div>
+
+        <div class="mv-info-box" style="margin-bottom:1.25rem;">
+            <strong>Unit Group format:</strong> comma-separated unit sets, pipe-separated per variable.<br>
+            Example: <code>km/hr|hr,m/sec|sec</code> means system 1 uses km/hr & hr, system 2 uses m/sec & sec.
+        </div>
+
+        <!-- COLUMN HEADERS -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 48px;gap:8px;padding:0 14px;margin-bottom:6px;">
+            <span class="mv-label" style="margin-bottom:0;">Var Name</span>
+            <span class="mv-label" style="margin-bottom:0;">Display Name</span>
+            <span class="mv-label" style="margin-bottom:0;">Expected Unit</span>
+            <span class="mv-label" style="margin-bottom:0;">Variable Type</span>
+            <span></span>
+        </div>
+
+        <div id="variables-container">
+            <div class="variable-row">
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 48px;gap:8px;align-items:center;">
+                    <input type="text" name="variable_name[]" placeholder="speed" required>
+                    <input type="text" name="display_name[]" placeholder="Speed" required>
+                    <input
+    type="text"
+    name="expected_unit[]"
+    placeholder="km/hr"
+    required
+>
+
+<select
+    name="variable_type[]"
+    required
+>
+
+    <option value="">Select Type</option>
+
+    <option value="distance">Distance</option>
+
+    <option value="speed">Speed</option>
+
+    <option value="time">Time</option>
+
+    <option value="flow">Flow</option>
+
+    <option value="pressure">Pressure</option>
+
+    <option value="temperature">Temperature</option>
+
+    <option value="density">Density</option>
+
+</select>
+                    <button type="button" class="mv-btn mv-btn-danger mv-btn-sm" style="padding:8px;justify-content:center;" onclick="removeVariable(this)" title="Remove">✕</button>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="mv-btn mv-btn-outline mv-btn-sm mv-mt-2" onclick="addVariable()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Variable
+        </button>
+
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="mv-flex mv-gap-2 mv-mt-3">
+        <button type="submit" class="mv-btn mv-btn-success">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Save Formula
+        </button>
+        <a href="/" class="mv-btn mv-btn-outline">Cancel</a>
+    </div>
+
+</form>
+</div>
+
+<script>
+function addVariable() {
+    const html = `
+    <div class="variable-row" style="margin-top:8px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 48px;gap:8px;align-items:center;">
+            <input type="text" name="variable_name[]" placeholder="distance" required>
+            <input type="text" name="display_name[]" placeholder="Distance" required>
+            <input type="text" name="expected_unit[]" placeholder="km" required>
+            <select name="variable_type[]" required>
+
+    <option value="">Select Type</option>
+
+    <option value="distance">Distance</option>
+
+    <option value="speed">Speed</option>
+
+    <option value="time">Time</option>
+
+    <option value="flow">Flow</option>
+
+    <option value="pressure">Pressure</option>
+
+    <option value="temperature">Temperature</option>
+
+    <option value="density">Density</option>
+
+</select>
+            <input type="text" name="variable_type[]" placeholder="distance" required>
+            <button type="button" class="mv-btn mv-btn-danger mv-btn-sm" style="padding:8px;justify-content:center;" onclick="removeVariable(this)" title="Remove">✕</button>
+        </div>
+    </div>`
+    document.getElementById('variables-container').insertAdjacentHTML('beforeend', html)
+}
+
+function removeVariable(button) {
+    button.closest('.variable-row').remove()
+}
+</script>
+
+<div class="mv-form-group">
+
+    <label class="mv-label">
+        Output Variable
+    </label>
+
+</div>
+
+{% endblock %}

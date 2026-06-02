@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ formula.name }} — Metaval Engineering</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<nav class="mv-nav">
+    <a href="/" class="mv-nav-brand">
+        <span class="brand-dot"></span>
+        Metaval &nbsp;<span style="font-weight:300;opacity:0.55;">|</span>&nbsp; Engineering Calc
+    </a>
+    <div class="mv-nav-links">
+        <a href="/" class="nav-outline">Home</a>
+        <a href="/history" class="nav-outline">History</a>
+        <a href="/create-formula" class="nav-primary">+ Create Formula</a>
+    </div>
+</nav>
+
+<main class="mv-main" style="max-width:760px;">
+
+    <div style="display:flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--text-muted);margin-bottom:1.5rem;">
+        <a href="/" style="color:var(--text-muted);text-decoration:none;">Home</a>
+        <span>›</span>
+        <span style="color:var(--text-white);">{{ formula.name }}</span>
+    </div>
+
+    <div class="mv-page-header">
+        <span class="mv-card-tag">Formula Details</span>
+        <h2 style="margin-top:6px;">{{ formula.name }}</h2>
+        <p>{{ formula.description }}</p>
+    </div>
+
+    <div class="mv-section-label">Expression</div>
+    <div class="mv-formula-box">{{ formula.expression }}</div>
+
+    <div class="mv-section-label" style="margin-top:1.75rem;">Variables</div>
+    <div class="mv-card">
+        <div class="mv-table-wrap" style="border:none;border-radius:0;">
+        <table class="mv-table" style="margin:0;">
+            <thead>
+                <tr>
+                    <th>Variable</th>
+                    <th>Display Name</th>
+                    <th>Expected Unit</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for var in variables %}
+            <tr>
+                <td><code style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:0.85rem;">{{ var.variable_name }}</code></td>
+                <td>{{ var.display_name }}</td>
+                <td><code style="font-family:'JetBrains Mono',monospace;color:var(--info);font-size:0.82rem;">{{ var.expected_unit }}</code></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+    <div class="mv-flex mv-gap-2" style="margin-top:1.5rem;">
+        <a href="/calculate/{{ formula.id }}" class="mv-btn mv-btn-primary">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="9" y2="15"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+            Open Calculator
+        </a>
+        <a href="/edit-formula/{{ formula.id }}" class="mv-btn mv-btn-outline">Edit Formula</a>
+    </div>
+
+</main>
+
+<footer class="mv-footer">
+    Metaval Engineering Calculator &nbsp;·&nbsp; <a href="https://metaval.com" target="_blank">metaval.com</a>
+</footer>
+</body>
+</html>

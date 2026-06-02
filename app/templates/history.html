@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Calculation History{% endblock %}
+
+{% block content %}
+
+<div class="mv-page-header">
+    <h2>Calculation History</h2>
+    <p>Complete log of all calculations performed.</p>
+</div>
+
+{% if calculations %}
+<div class="mv-table-wrap">
+<table class="mv-table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Formula</th>
+            <th>Inputs Used</th>
+            <th>Result</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for calc in calculations %}
+    <tr>
+        <td class="id-cell">{{ calc.id }}</td>
+        <td><strong style="color:var(--text-white);">{{ calc.formula_name }}</strong></td>
+        <td style="font-size:0.82rem;font-family:'JetBrains Mono',monospace;color:var(--text-muted);max-width:280px;word-break:break-all;">{{ calc.values_used }}</td>
+        <td class="answer-cell">{{ calc.answer }}</td>
+        <td style="font-size:0.8rem;color:var(--text-muted);white-space:nowrap;">{{ calc.created_at }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% else %}
+<div class="mv-empty">
+    <div class="mv-empty-icon">📋</div>
+    <p>No calculations yet. <a href="/" style="color:var(--accent);">Go calculate something.</a></p>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Unit Conversions{% endblock %}
+
+{% block content %}
+
+<div class="mv-page-header">
+
+    <h2>Unit Conversions</h2>
+
+    <p>
+        Manage all global conversion multipliers
+    </p>
+
+</div>
+
+<div class="mv-card">
+
+<form method="POST">
+
+<table class="mv-table">
+
+<thead>
+
+<tr>
+
+    <th>Type</th>
+    <th>Unit</th>
+    <th>Multiplier</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for row in units %}
+
+<tr>
+
+    <td>{{ row.quantity_type }}</td>
+
+    <td>{{ row.unit_name }}</td>
+
+    <td>
+
+        <input
+            type="number"
+            step="any"
+            name="factor_{{ row.id }}"
+            value="{{ row.factor_to_base }}"
+        >
+
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+<button
+    type="submit"
+    class="mv-btn mv-btn-primary"
+    style="margin-top:20px;"
+>
+
+    Save Changes
+
+</button>
+
+</form>
+
+</div>
+
+{% endblock %}

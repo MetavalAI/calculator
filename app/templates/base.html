@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MetaDocs Calculator{% endblock %} — Metaval Engineering</title>
+
+    <link rel="icon" type="image/x-icon" 
+        href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="mv-nav">
+    <a href="/" class="mv-nav-brand">
+        <span class="brand-dot"></span>
+        Metaval &nbsp;<span style="font-weight:300;opacity:0.55;">|</span>&nbsp; Engineering Calculator
+    </a>
+
+    <div class="mv-nav-links">
+        <a href="/" class="nav-outline">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Home
+        </a>
+        <a href="/history" class="nav-outline">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            History
+        </a>
+        <a href="/create-formula" class="nav-primary">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Create Formula
+        </a>
+        <a href="/export-excel" class="nav-outline">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Excel Export
+        </a>
+    </div>
+</nav>
+
+<!-- PAGE CONTENT -->
+<main class="mv-main">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% if messages %}
+
+        {% for category, message in messages %}
+
+            <div class="flash-message flash-{{ category }}">
+
+                {{ message }}
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+{% endwith %}
+    {% block content %}{% endblock %}
+</main>
+
+<!-- FOOTER -->
+<footer class="mv-footer">
+    Metaval Engineering Calculator &nbsp;·&nbsp; <a href="https://metaval.com" target="_blank">metaval.com</a>
+</footer>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

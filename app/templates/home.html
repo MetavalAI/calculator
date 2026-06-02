@@ -1,0 +1,310 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<div class="mv-page-header">
+
+{% if current_user.is_authenticated %}
+
+<div style="
+    margin-bottom:20px;
+    padding:12px;
+    background:#1f2937;
+    border-radius:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+">
+
+```
+<div style="color:white;">
+
+    ✅ Logged in as
+
+    <strong style="color:#4ade80;">
+        {{ current_user.username }}
+    </strong>
+
+</div>
+
+<a
+    href="/logout"
+    class="mv-btn mv-btn-outline"
+>
+    Logout
+</a>
+```
+
+</div>
+
+{% else %}
+
+<div style="
+    margin-bottom:20px;
+    padding:12px;
+    background:#3b1d1d;
+    border-radius:10px;
+">
+
+```
+<span style="color:white;">
+    ❌ Not Logged In
+</span>
+
+<a
+    href="/login"
+    style="
+        color:#4ade80;
+        margin-left:10px;
+        text-decoration:none;
+        font-weight:bold;
+    "
+>
+    Login
+</a>
+```
+
+</div>
+
+{% endif %}
+
+<h2>Available Formulas</h2>
+
+<p>
+    Select a formula to calculate, or create a new one.
+</p>
+
+<div style="margin-top:20px;margin-bottom:25px;">
+
+```
+<input
+    type="text"
+    id="formulaSearch"
+    placeholder="Search Formula..."
+    style="
+        width:100%;
+        padding:12px;
+        border-radius:10px;
+        border:none;
+        background:#1f2937;
+        color:white;
+    "
+>
+```
+
+</div>
+
+</div>
+
+{% if formulas %}
+
+<div class="mv-grid-3">
+
+{% for formula in formulas %}
+
+<div class="mv-card formula-card">
+
+```
+<span class="mv-card-tag">
+    Formula
+</span>
+
+<div class="mv-card-title">
+
+    <a href="/formula/{{ formula.id }}">
+        {{ formula.name }}
+    </a>
+
+</div>
+
+<p>
+    {{ formula.description or 'No description provided.' }}
+</p>
+
+<div class="mv-flex mv-gap-2">
+
+    <a
+        href="/calculate/{{ formula.id }}"
+        class="mv-btn mv-btn-primary"
+        style="flex:1;justify-content:center;"
+    >
+
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="15" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="15" x2="15" y2="15"/>
+        </svg>
+
+        Calculate
+
+    </a>
+
+    <a
+        href="/formula/{{ formula.id }}"
+        class="mv-btn mv-btn-outline mv-btn-sm"
+    >
+        View
+    </a>
+
+</div>
+```
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="mv-empty">
+
+```
+<div class="mv-empty-icon">
+    ⚙️
+</div>
+
+<p>
+    No formulas yet.
+
+    <a
+        href="/create-formula"
+        style="color:var(--accent);"
+    >
+        Create your first formula.
+    </a>
+
+</p>
+```
+
+</div>
+
+{% endif %}
+
+<hr class="mv-divider" style="margin-top:2.5rem;">
+
+<div
+    class="mv-section-label"
+    style="margin-bottom:1.25rem;"
+>
+    Recent Calculations
+</div>
+
+{% if calculations %}
+
+<div class="mv-table-wrap">
+
+<table class="mv-table">
+
+```
+<thead>
+
+    <tr>
+
+        <th>#</th>
+
+        <th>Formula</th>
+
+        <th>Inputs</th>
+
+        <th>Result</th>
+
+    </tr>
+
+</thead>
+
+<tbody>
+
+{% for calc in calculations %}
+
+<tr>
+
+    <td class="id-cell">
+        {{ calc.id }}
+    </td>
+
+    <td>
+
+        <strong style="color:var(--text-white);">
+            {{ calc.formula_name }}
+        </strong>
+
+    </td>
+
+    <td style="
+        font-size:0.82rem;
+        font-family:'JetBrains Mono',monospace;
+        color:var(--text-muted);
+    ">
+        {{ calc.values_used }}
+    </td>
+
+    <td class="answer-cell">
+        {{ calc.answer }}
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+```
+
+</table>
+
+</div>
+
+{% else %}
+
+<div class="mv-empty" style="padding:2rem 1rem;">
+
+```
+<p style="
+    color:var(--text-muted);
+    font-size:0.875rem;
+">
+    No calculations yet.
+</p>
+```
+
+</div>
+
+{% endif %}
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const searchInput =
+        document.getElementById('formulaSearch')
+
+    const cards =
+        document.querySelectorAll('.formula-card')
+
+    searchInput.addEventListener('input', function () {
+
+        let filter =
+            this.value.toLowerCase().trim()
+
+        cards.forEach(card => {
+
+            let text =
+                card.innerText.toLowerCase()
+
+            if (text.includes(filter)) {
+
+                card.style.display = 'block'
+
+            } else {
+
+                card.style.display = 'none'
+            }
+        })
+    })
+})
+
+</script>
+
+{% endblock %}
