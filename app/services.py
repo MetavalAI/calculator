@@ -1,22 +1,20 @@
 from asteval import Interpreter
 import math
-
+import re
 from app.models import UnitConversion
 
 
-def convert_to_base(
-    value,
-    unit,
-    variable_type
-):
+def convert_to_base(value, unit, variable_type):
+    """
+    Convert any unit value to base unit.
+    """
 
     record = UnitConversion.query.filter_by(
-    quantity_type=variable_type,
-    unit_name=unit
-).first()
+        quantity_type=variable_type,
+        unit_name=unit
+    ).first()
 
     if not record:
-
         raise Exception(
             f"Unit '{unit}' not found for type '{variable_type}'"
         )
@@ -24,86 +22,84 @@ def convert_to_base(
     return float(value) * float(record.factor_to_base)
 
 
-def evaluate_formula(
-    expression,
-    variables,
-    variable_config,
-    output_variable
-):
+def evaluate_formula(expression, variables, variable_config, output_variable):
+    """
+    Evaluate formula safely with unit conversion support.
+    """
 
     processed_values = {}
-    
+
     # INPUT CONVERSION
+    for name, data in variables.items():
 
-    for variable_name, value_data in variables.items():
+        value = data["value"]
+        unit = data["unit"]
 
-        value = value_data["value"]
-
-        selected_unit = value_data["unit"]
-
-        variable_type = variable_config[
-            variable_name
-        ]["variable_type"]
+        var_type = variable_config[name]["variable_type"]
 
         base_value = convert_to_base(
-
-            value=value,
-
-            unit=selected_unit,
-
-            variable_type=variable_type
+            value,
+            unit,
+            var_type
         )
 
-        processed_values[
-            variable_name
-        ] = base_value
-    
-    # EXPRESSION BUILDING
+        processed_values[name] = base_value
 
+    # BUILD EXPRESSION
     final_expression = expression
 
-    for variable, value in processed_values.items():
+    for name, value in processed_values.items():
 
-        final_expression = final_expression.replace(
-
-            variable,
-
-            str(value)
+        final_expression = re.sub(
+            rf"\b{re.escape(name)}\b",
+            str(value),
+            final_expression
         )
 
-    # SAFE EVALUATION    
-
+    # SAFE EVALUATION
     aeval = Interpreter(
-
         usersyms={
-
             "sqrt": math.sqrt,
-
             "pow": math.pow
         }
     )
 
-    result = aeval(final_expression)
+    try:
+        result = aeval(final_expression)
+
+    except ZeroDivisionError:
+        raise Exception("Division by zero error in formula")
+
+    except Exception as e:
+        raise Exception(f"Formula evaluation error: {str(e)}")
 
     if aeval.error:
+        raise Exception("Invalid Formula Expression")
 
-        raise Exception(
-            "Invalid Formula Expression"
-        )
-
-    # ROUNDING    
-
+    # ROUNDING
     if result == int(result):
-
         result = int(result)
-
     else:
-
         result = round(result, 6)
 
+    # OUTPUT UNIT SYSTEM
+    output_unit = ""
+
+    output_config = variable_config.get(output_variable)
+
+    if output_config:
+
+        output_type = output_config.get("variable_type")
+
+        unit_row = UnitConversion.query.filter_by(
+            quantity_type=output_type
+        ).first()
+
+        if unit_row:
+            output_unit = unit_row.unit_name
+
+    # FINAL RESPONSE
     return {
-
         "value": result,
-
-        "unit": ""
-    }
+        "unit": output_unit
+}

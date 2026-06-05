@@ -5,24 +5,21 @@
 
 <div class="mv-page-header">
 
-```
-<span class="mv-card-tag">
-    Formula Calculator
-</span>
+    <span class="mv-card-tag">
+        Formula Calculator
+    </span>
 
-<h2 style="margin-top:8px;">
-    {{ formula.name }}
-</h2>
+    <h2 style="margin-top:8px;">
+        {{ formula.name }}
+    </h2>
 
-<p>
-    {{ formula.description }}
-</p>
-```
+    <p>
+        {{ formula.description }}
+    </p>
 
 </div>
 
 <!-- FORMULA -->
-
 <div class="mv-section-label">
     Formula Expression
 </div>
@@ -32,227 +29,125 @@
 </div>
 
 <!-- CARD -->
-
 <div class="mv-card" style="margin-top:1.5rem;">
 
-```
-<!-- UNIT SYSTEM -->
+    <!-- VARIABLES -->
+    {% for var in variables %}
 
-<div class="mv-form-group">
+    <div class="mv-form-group">
 
-    <label class="mv-label">
+        <label class="mv-label">
+            {{ var.display_name }}
+        </label>
 
-        Unit System
+        <div class="mv-variable-row">
 
-    </label>
+            <!-- VALUE -->
+            <input
+                type="number"
+                step="any"
+                id="value_{{ var.variable_name }}"
+                class="mv-input mv-value-input"
+                placeholder="Enter {{ var.display_name }}"
+            >
 
-    <select
-        id="unit_system"
-        class="mv-input"
-        onchange="applyUnitPreset()"
+            <!-- UNIT -->
+            <select
+                id="unit_{{ var.variable_name }}"
+                class="mv-unit-select"
+            >
+
+                {% if var.unit_options and var.unit_options|length > 0 %}
+
+                    {% for unit in var.unit_options %}
+                        <option value="{{ unit }}">{{ unit }}</option>
+                    {% endfor %}
+
+                {% else %}
+
+                    <option value="{{ var.expected_unit }}">
+                        {{ var.expected_unit }}
+                    </option>
+
+                {% endif %}
+
+            </select>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+    <!-- BUTTON -->
+    <button
+        class="mv-btn mv-btn-primary"
+        style="
+            width:100%;
+            justify-content:center;
+            padding:12px;
+            margin-top:10px;
+        "
+        onclick="calculateFormula()"
     >
+        Calculate
+    </button>
 
-        {% if variables and variables|length > 0 and variables[0].available_units %}
+    <!-- RESULT -->
+    <div class="mv-result" id="result-box">
 
-    {% set first_var = variables[0] %}
-    {% set systems = first_var.available_units.split(',') %}
+        <div class="mv-result-label">
+            Result
+        </div>
 
-    {% for system in systems %}
-        <option value="{{ system }}">
-            System {{ loop.index }}
-        </option>
-    {% endfor %}
-
-{% else %}
-
-    <option value="">
-        Default Units
-    </option>
-
-{% endif %}
-
-    </select>
-
-</div>
-
-<hr class="mv-divider">
-
-<!-- VARIABLES -->
-
-{% for var in variables %}
-
-<div class="mv-form-group">
-
-    <label class="mv-label">
-
-        {{ var.display_name }}
-
-    </label>
-
-    <div class="mv-variable-row">
-
-        <!-- VALUE -->
-
-        <input
-            type="number"
-            step="any"
-            id="value_{{ var.variable_name }}"
-            class="mv-input mv-value-input"
-            placeholder="Enter {{ var.display_name }}"
-        >
-
-        <!-- UNIT -->
-
-        <select
-            id="unit_{{ var.variable_name }}"
-            class="mv-unit-select"
-        >
-
-            {% if var.available_units %}
-
-    {% set systems = var.available_units.split(',') %}
-
-    {% for system in systems %}
-        {% set unit_parts = system.split('|') %}
-
-        {% for unit in unit_parts %}
-            <option value="{{ unit.strip() }}">
-                {{ unit.strip() }}
-            </option>
-        {% endfor %}
-    {% endfor %}
-
-{% else %}
-
-    <option value="{{ var.expected_unit }}">
-        {{ var.expected_unit }}
-    </option>
-
-{% endif %}
-
-        </select>
+        <div class="mv-result-value" id="result-value"></div>
 
     </div>
-
-</div>
-
-{% endfor %}
-
-<!-- BUTTON -->
-
-<button
-    class="mv-btn mv-btn-primary"
-    style="
-        width:100%;
-        justify-content:center;
-        padding:12px;
-        margin-top:10px;
-    "
-    onclick="calculateFormula()"
->
-
-    Calculate
-
-</button>
-
-<!-- RESULT -->
-
-<div class="mv-result" id="result-box">
-
-    <div class="mv-result-label">
-
-        Result
-
-    </div>
-
-    <div
-        class="mv-result-value"
-        id="result-value"
-    ></div>
-
-</div>
-```
 
 </div>
 
 <!-- STYLES -->
-
 <style>
 
 .mv-variable-row{
-
     display:flex;
-
     gap:12px;
-
     align-items:center;
 }
 
 .mv-value-input{
-
     flex:2;
 }
 
 .mv-unit-select{
-
     flex:1;
-
     background:var(--bg-deep);
-
     color:var(--text-white);
-
     border:1px solid var(--border);
-
     border-radius:8px;
-
     padding:10px 14px;
-
     min-width:140px;
 }
 
 </style>
 
 <!-- SCRIPT -->
-
 <script>
-
-function applyUnitPreset() {
-
-    let preset = document
-        .getElementById('unit_system')
-        .value
-
-    let units = preset.split('|')
-
-    {% for var in variables %}
-
-    document.getElementById(
-        'unit_{{ var.variable_name }}'
-    ).value = units[{{ loop.index0 }}].trim()
-
-    {% endfor %}
-}
-
-window.onload = applyUnitPreset
-
 
 async function calculateFormula() {
 
     let values = {}
 
-    let resultBox =
-        document.getElementById('result-box')
-
-    let resultValue =
-        document.getElementById('result-value')
+    let resultBox = document.getElementById('result-box')
+    let resultValue = document.getElementById('result-value')
 
     {% for var in variables %}
 
     values["{{ var.variable_name }}"] = {
 
-        value: document.getElementById(
+        value: Number(document.getElementById(
             "value_{{ var.variable_name }}"
-        ).value,
+        ).value),
 
         unit: document.getElementById(
             "unit_{{ var.variable_name }}"
@@ -262,89 +157,57 @@ async function calculateFormula() {
     {% endfor %}
 
     // VALIDATION
-
     for (let key in values) {
 
-        if (values[key].value === '') {
+        if (!values[key].value) {
 
-            resultBox.className =
-                'mv-result show error'
-
-            resultValue.textContent =
-                'Please fill all values.'
-
+            resultBox.className = 'mv-result show error'
+            resultValue.textContent = 'Please fill all values.'
             return
         }
     }
 
     try {
 
-        const response = await fetch(
-            '/api/calculate',
-            {
-
-                method: 'POST',
-
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-
-                body: JSON.stringify({
-
-                    formula_id: {{ formula.id }},
-
-                    values: values
-                })
-            }
-        )
+        const response = await fetch('/api/calculate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                formula_id: {{ formula.id }},
+                values: values
+            })
+        })
 
         const data = await response.json()
 
-        if (!response.ok ||
-            data.success === false) {
+        if (!response.ok || data.success === false) {
 
-            resultBox.className =
-                'mv-result show error'
-
-            resultValue.textContent =
-                'Error: ' + data.error
+            resultBox.className = 'mv-result show error'
+            resultValue.textContent = 'Error: ' + data.error
 
         } else {
 
-            resultBox.className =
-                'mv-result show success'
+            resultBox.className = 'mv-result show success'
 
             resultValue.textContent =
-
                 data.answer.value +
-
-                (
-                    data.answer.unit
-                    ? ' ' + data.answer.unit
-                    : ''
-                )
+                (data.answer.unit ? ' ' + data.answer.unit : '')
         }
 
     } catch (err) {
 
-        resultBox.className =
-            'mv-result show error'
-
-        resultValue.textContent =
-            'Network error.'
+        resultBox.className = 'mv-result show error'
+        resultValue.textContent = 'Network error.'
     }
 }
 
-document.addEventListener(
-    'keydown',
-    e => {
-
-        if (e.key === 'Enter') {
-
-            calculateFormula()
-        }
+document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+        calculateFormula()
     }
-)
+})
 
 </script>
 
