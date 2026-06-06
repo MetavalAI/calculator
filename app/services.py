@@ -3,7 +3,6 @@ import math
 import re
 from app.models import UnitConversion
 
-
 def convert_to_base(value, unit, variable_type):
     """
     Convert any unit value to base unit.
@@ -21,15 +20,13 @@ def convert_to_base(value, unit, variable_type):
 
     return float(value) * float(record.factor_to_base)
 
-
 def evaluate_formula(expression, variables, variable_config, output_variable):
     """
     Evaluate formula safely with unit conversion support.
     """
 
     processed_values = {}
-
-    # INPUT CONVERSION
+# INPUT CONVERSION
     for name, data in variables.items():
 
         value = data["value"]
@@ -44,8 +41,7 @@ def evaluate_formula(expression, variables, variable_config, output_variable):
         )
 
         processed_values[name] = base_value
-
-    # BUILD EXPRESSION
+# BUILD EXPRESSION
     final_expression = expression
 
     for name, value in processed_values.items():
@@ -55,8 +51,7 @@ def evaluate_formula(expression, variables, variable_config, output_variable):
             str(value),
             final_expression
         )
-
-    # SAFE EVALUATION
+# SAFE EVALUATION
     aeval = Interpreter(
         usersyms={
             "sqrt": math.sqrt,
@@ -75,14 +70,12 @@ def evaluate_formula(expression, variables, variable_config, output_variable):
 
     if aeval.error:
         raise Exception("Invalid Formula Expression")
-
-    # ROUNDING
+# ROUNDING
     if result == int(result):
         result = int(result)
     else:
         result = round(result, 6)
-
-    # OUTPUT UNIT SYSTEM
+# OUTPUT UNIT SYSTEM
     output_unit = ""
 
     output_config = variable_config.get(output_variable)
@@ -97,8 +90,7 @@ def evaluate_formula(expression, variables, variable_config, output_variable):
 
         if unit_row:
             output_unit = unit_row.unit_name
-
-    # FINAL RESPONSE
+# FINAL RESPONSE
     return {
         "value": result,
         "unit": output_unit
