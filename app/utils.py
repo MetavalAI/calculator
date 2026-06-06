@@ -1,11 +1,6 @@
 from app.unit_conversions import UNIT_CONVERSIONS
 
-
-def convert_to_expected(
-    value,
-    current_unit,
-    expected_unit
-):
+def convert_to_expected(value, current_unit, expected_unit):
 
     try:
 

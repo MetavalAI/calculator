@@ -27,19 +27,11 @@ import json
 import os
 import logging
 
-from flask_login import (
-    login_user,
-    logout_user,
-    login_required,
-    current_user
-)
+from flask_login import (login_user, logout_user, login_required, current_user)
 
 main = Blueprint('main', __name__)
 
-
-# =========================
 # HOME PAGE
-# =========================
 @main.route('/')
 def home():
 
@@ -56,10 +48,7 @@ def home():
         current_user=current_user
     )
 
-
-# =========================
 # HISTORY
-# =========================
 @main.route('/history')
 def history():
 
@@ -72,10 +61,7 @@ def history():
         calculations=calculations
     )
 
-
-# =========================
 # EXPORT EXCEL
-# =========================
 @main.route('/export-excel')
 def export_excel():
 
@@ -112,10 +98,7 @@ def export_excel():
         download_name='calculations.xlsx'
     )
 
-
-# =========================
 # CREATE FORMULA
-# =========================
 @main.route('/create-formula', methods=['GET', 'POST'])
 def create_formula():
 
@@ -162,10 +145,7 @@ def create_formula():
 
     return render_template('create_formula.html')
 
-
-# =========================
 # CALCULATE PAGE
-# =========================
 @main.route('/calculate/<int:formula_id>')
 def calculate_page(formula_id):
 
@@ -189,10 +169,7 @@ def calculate_page(formula_id):
         variables=variables
     )
 
-
-# =========================
 # API CALCULATE
-# =========================
 @main.route('/api/calculate', methods=['POST'])
 def calculate_api():
 
@@ -260,10 +237,7 @@ def calculate_api():
             'error': str(e)
         }), 400
 
-
-# =========================
 # LOGIN / LOGOUT
-# =========================
 @main.route('/login', methods=['GET', 'POST'])
 def login():
 
@@ -283,7 +257,6 @@ def login():
 
     return render_template('login.html', error=error)
 
-
 @main.route('/logout')
 @login_required
 def logout():
@@ -293,11 +266,7 @@ def logout():
 
     return redirect('/')
 
-
-# =========================
 # UNIT MANAGEMENT (CLEAN SYSTEM)
-# =========================
-
 @main.route('/unit-conversions', methods=['GET', 'POST'])
 @login_required
 def unit_master():
@@ -322,7 +291,6 @@ def unit_master():
 
     return render_template('unit_conversions.html', units=units)
 
-
 @main.route('/add-unit', methods=['POST'])
 @login_required
 def add_unit():
@@ -336,7 +304,6 @@ def add_unit():
     db.session.commit()
     return redirect('/unit-conversions')
 
-
 @main.route('/delete-unit/<int:id>')
 @login_required
 def delete_unit(id):
@@ -348,10 +315,7 @@ def delete_unit(id):
 
     return redirect('/unit-conversions')
 
-
-# =========================
 # SEED UNITS (NO LOGIN REQUIRED)
-# =========================
 @main.route('/seed-units')
 def seed_units():
 

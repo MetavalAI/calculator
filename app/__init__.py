@@ -10,7 +10,6 @@ from flask_login import LoginManager
 db = SQLAlchemy()
 login_manager = LoginManager()
 
-
 def create_app():
 
     app = Flask(__name__)
@@ -22,7 +21,7 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = 'main.login'
 
-    # --- Logging Setup ---
+# Logging Setup
     os.makedirs('logs', exist_ok=True)
 
     fmt = logging.Formatter('%(asctime)s [%(levelname)s] %(name)s: %(message)s')
@@ -35,7 +34,7 @@ def create_app():
     file_handler.setLevel(logging.ERROR)
     file_handler.setFormatter(fmt)
 
-    # Werkzeug - request logs
+# Werkzeug - request logs
     werkzeug_logger = logging.getLogger('werkzeug')
     werkzeug_logger.setLevel(logging.DEBUG)
     werkzeug_logger.handlers.clear()
@@ -43,13 +42,13 @@ def create_app():
     werkzeug_logger.addHandler(file_handler)
     werkzeug_logger.propagate = False
 
-    # SQLAlchemy - query logs (INFO karo agar queries dekhni ho)
+# SQLAlchemy - query logs (INFO karo agar queries dekhni ho)
     sql_logger = logging.getLogger('sqlalchemy.engine')
     sql_logger.setLevel(logging.WARNING)
     sql_logger.addHandler(console_handler)
     sql_logger.propagate = False
 
-    # Root logger
+# Root logger
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.DEBUG)
     root_logger.handlers.clear()
@@ -57,13 +56,10 @@ def create_app():
     root_logger.addHandler(file_handler)
 
     app.logger.setLevel(logging.DEBUG)
-    # --- Logging Setup End ---
-
+# Logging Setup End
     from app.routes import main
     app.register_blueprint(main)
-
     from app.models import User
-
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
